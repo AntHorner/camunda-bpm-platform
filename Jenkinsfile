@@ -532,257 +532,257 @@ pipeline {
         }
       }
     }
-//    stage('db tests + CE webapps IT') {
-//      parallel {
-//        stage('engine-api-compatibility') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-unit')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('h2')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent('gcr.io/ci-30-162810/centos:v0.4.6', 16)
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, false, false, 'engine/', 'clean verify -Pcheck-api-compatibility')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('engine-UNIT-plugins') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-unit')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('h2')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent('gcr.io/ci-30-162810/centos:v0.4.6', 16)
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, false, false, 'engine/', 'clean test -Pcheck-plugins')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('engine-UNIT-database-table-prefix') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-unit')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('h2')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent()
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, false, false, 'engine/', 'clean test -Pdb-table-prefix')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('webapp-UNIT-database-table-prefix') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'webapps-unit')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('h2')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent()
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                nodejs('nodejs-14.6.0') {
-//                  runMaven(true, false, false, 'webapps/', 'clean test -Pdb-table-prefix')
-//                }
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('engine-UNIT-wls-compatibility') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-unit')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('h2')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent()
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, false, false, '.', 'clean verify -Pcheck-engine,wls-compatibility,jersey')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('engine-IT-wildfly-domain') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-IT-wildfly')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('IT')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent()
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, true, false, 'qa/', 'clean install -Pwildfly-domain,h2,engine-integration')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//        stage('engine-IT-wildfly-servlet') {
-//          when {
-//            allOf {
-//              expression {
-//                skipStageType(failedStageTypes, 'engine-IT-wildfly')
-//              }
-//              anyOf {
-//                branch 'pipeline-master';
-//                allOf {
-//                  changeRequest();
-//                  expression {
-//                    withLabels('IT')
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          agent {
-//            kubernetes {
-//              yaml getAgent()
-//            }
-//          }
-//          steps {
-//            catchError(stageResult: 'FAILURE') {
-//              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                runMaven(true, true, true, 'qa/', 'clean install -Pwildfly,wildfly-servlet,h2,engine-integration')
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//            }
-//          }
-//        }
-//      }
-//    }
+    stage('db tests + CE webapps IT') {
+      parallel {
+        stage('engine-api-compatibility') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-unit')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('h2')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent('gcr.io/ci-30-162810/centos:v0.4.6', 16)
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, false, false, 'engine/', 'clean verify -Pcheck-api-compatibility')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('engine-UNIT-plugins') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-unit')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('h2')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent('gcr.io/ci-30-162810/centos:v0.4.6', 16)
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, false, false, 'engine/', 'clean test -Pcheck-plugins')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('engine-UNIT-database-table-prefix') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-unit')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('h2')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent()
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, false, false, 'engine/', 'clean test -Pdb-table-prefix')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('webapp-UNIT-database-table-prefix') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'webapps-unit')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('h2')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent()
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                nodejs('nodejs-14.6.0') {
+                  runMaven(true, false, false, 'webapps/', 'clean test -Pdb-table-prefix')
+                }
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('engine-UNIT-wls-compatibility') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-unit')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('h2')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent()
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, false, false, '.', 'clean verify -Pcheck-engine,wls-compatibility,jersey')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('engine-IT-wildfly-domain') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-IT-wildfly')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('IT')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent()
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, true, false, 'qa/', 'clean install -Pwildfly-domain,h2,engine-integration')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('engine-IT-wildfly-servlet') {
+          when {
+            allOf {
+              expression {
+                skipStageType(failedStageTypes, 'engine-IT-wildfly')
+              }
+              anyOf {
+                branch 'pipeline-master';
+                allOf {
+                  changeRequest();
+                  expression {
+                    withLabels('IT')
+                  }
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getAgent()
+            }
+          }
+          steps {
+            catchError(stageResult: 'FAILURE') {
+              withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                runMaven(true, true, true, 'qa/', 'clean install -Pwildfly,wildfly-servlet,h2,engine-integration')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+      }
+    }
   }
   post {
     changed {
