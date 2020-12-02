@@ -480,58 +480,58 @@ pipeline {
         }
       }
     }
-//    stage('UNIT DB tests') {
-//      matrix {
-//        axes {
-//          axis {
-//            name 'DB'
-//            values 'postgresql_96', 'mariadb_103'
-//          }
-//          axis {
-//            name 'PROFILE'
-//            values 'engine-unit', 'engine-unit-authorizations', 'webapps-unit', 'webapps-unit-authorizations'
-//          }
-//        }
-//        when {
-//          allOf {
-//            expression {
-//              skipStageType(failedStageTypes, env.PROFILE)
-//            }
-//            anyOf {
-//              branch 'pipeline-master';
-//              allOf {
-//                changeRequest();
-//                expression {
-//                  withLabels("all-db", getDbType(env.DB))
-//                }
-//              }
-//            }
-//          }
-//        }
-//        agent {
-//          kubernetes {
-//            yaml getDbAgent(env.DB)
-//          }
-//        }
-//        stages {
-//          stage('UNIT test') {
-//            steps {
-//              echo("UNIT DB Test Stage: ${env.PROFILE}-${env.DB}")
-//              catchError(stageResult: 'FAILURE') {
-//                withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
-//                  runMaven(true, false, false, getMavenProfileDir(env.PROFILE), getMavenProfileCmd(env.PROFILE) + getDbProfiles(env.DB) + " " + getDbExtras(env.DB), true)
-//                }
-//              }
-//            }
-//            post {
-//              always {
-//                junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-//              }
-//            }
-//          }
-//        }
-//      }
-//    }
+    stage('UNIT DB tests') {
+      matrix {
+        axes {
+          axis {
+            name 'DB'
+            values 'postgresql_96', 'mariadb_103'
+          }
+          axis {
+            name 'PROFILE'
+            values 'engine-unit', 'engine-unit-authorizations', 'webapps-unit', 'webapps-unit-authorizations'
+          }
+        }
+        when {
+          allOf {
+            expression {
+              skipStageType(failedStageTypes, env.PROFILE)
+            }
+            anyOf {
+              branch 'pipeline-master';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels("all-db", getDbType(env.DB))
+                }
+              }
+            }
+          }
+        }
+        agent {
+          kubernetes {
+            yaml getDbAgent(env.DB)
+          }
+        }
+        stages {
+          stage('UNIT test') {
+            steps {
+              echo("UNIT DB Test Stage: ${env.PROFILE}-${env.DB}")
+              catchError(stageResult: 'FAILURE') {
+                withMaven(jdk: 'jdk-8-latest', maven: 'maven-3.2-latest', mavenSettingsConfig: 'camunda-maven-settings', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: true)]) {
+                  runMaven(true, false, false, getMavenProfileDir(env.PROFILE), getMavenProfileCmd(env.PROFILE) + getDbProfiles(env.DB) + " " + getDbExtras(env.DB), true)
+                }
+              }
+            }
+            post {
+              always {
+                junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+              }
+            }
+          }
+        }
+      }
+    }
 //    stage('db tests + CE webapps IT') {
 //      parallel {
 //        stage('engine-api-compatibility') {
