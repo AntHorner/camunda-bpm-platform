@@ -99,14 +99,8 @@ pipeline {
       parallel {
         stage('engine-UNIT-h2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('h2')
-                }
-              }
+            expression {
+              withLabels('h2')
             }
           }
           agent {
@@ -132,14 +126,8 @@ pipeline {
         }
         stage('engine-UNIT-authorizations-h2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('h2')
-                }
-              }
+            expression {
+              withLabels('h2')
             }
           }
           agent {
@@ -165,14 +153,8 @@ pipeline {
         }
         stage('engine-rest-UNIT-jersey-2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('rest')
-                }
-              }
+            expression {
+              withLabels('rest')
             }
           }
           agent {
@@ -195,14 +177,8 @@ pipeline {
         }
         stage('engine-rest-UNIT-resteasy3') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('rest')
-                }
-              }
+            expression {
+              withLabels('rest')
             }
           }
           agent {
@@ -225,14 +201,8 @@ pipeline {
         }
         stage('webapp-UNIT-h2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('webapps')
-                }
-              }
+            expression {
+              withLabels('default-build','h2')
             }
           }
           agent {
@@ -258,14 +228,8 @@ pipeline {
         }
         stage('webapp-UNIT-authorizations-h2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('webapps')
-                }
-              }
+            expression {
+              withLabels('default-build','h2')
             }
           }
           agent {
@@ -291,14 +255,8 @@ pipeline {
         }
         stage('engine-IT-tomcat-9-postgresql-96') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('IT')
-                }
-              }
+            expression {
+              withLabels('all-as','tomcat')
             }
           }
           agent {
@@ -317,21 +275,12 @@ pipeline {
             always {
               junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
             }
-            failure {
-              addFailedStageType(failedStageTypes, 'engine-IT')
-            }
           }
         }
         stage('engine-IT-wildfly-postgresql-96') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('IT')
-                }
-              }
+            expression {
+              withLabels('all-as','wildfly')
             }
           }
           agent {
@@ -357,14 +306,8 @@ pipeline {
         }
         stage('webapp-IT-tomcat-9-h2') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('webapps', 'IT')
-                }
-              }
+            expression {
+              withLabels('all-as','tomcat')
             }
           }
           agent {
@@ -390,14 +333,8 @@ pipeline {
         }
         stage('webapp-IT-standalone-wildfly') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('webapps', 'IT')
-                }
-              }
+            expression {
+              withLabels('all-as','wildfly')
             }
           }
           agent {
@@ -420,14 +357,8 @@ pipeline {
         }
         stage('camunda-run-IT') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('IT', 'run', 'spring-boot')
-                }
-              }
+            expression {
+              withLabels('IT', 'run', 'spring-boot')
             }
           }
           agent {
@@ -450,14 +381,8 @@ pipeline {
         }
         stage('spring-boot-starter-IT') {
           when {
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels('IT', 'spring-boot')
-                }
-              }
+            expression {
+              withLabels('IT', 'spring-boot')
             }
           }
           agent {
@@ -493,19 +418,8 @@ pipeline {
           }
         }
         when {
-          allOf {
-            expression {
-              skipStageType(failedStageTypes, env.PROFILE)
-            }
-            anyOf {
-              branch 'pipeline-master';
-              allOf {
-                changeRequest();
-                expression {
-                  withLabels("all-db", getDbType(env.DB))
-                }
-              }
-            }
+          expression {
+            skipStageType(failedStageTypes, env.PROFILE) && withLabels("all-db", getDbType(env.DB))
           }
         }
         agent {
@@ -536,19 +450,8 @@ pipeline {
       parallel {
         stage('engine-api-compatibility') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-unit')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('h2')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-unit') && withLabels('h2')
             }
           }
           agent {
@@ -571,19 +474,8 @@ pipeline {
         }
         stage('engine-UNIT-plugins') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-unit')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('h2')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-unit') && withLabels('h2')
             }
           }
           agent {
@@ -606,19 +498,8 @@ pipeline {
         }
         stage('engine-UNIT-database-table-prefix') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-unit')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('h2')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-unit') && withLabels('h2')
             }
           }
           agent {
@@ -641,19 +522,8 @@ pipeline {
         }
         stage('webapp-UNIT-database-table-prefix') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'webapps-unit')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('h2')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'webapps-unit') && withLabels('h2')
             }
           }
           agent {
@@ -678,19 +548,8 @@ pipeline {
         }
         stage('engine-UNIT-wls-compatibility') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-unit')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('h2')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-unit') && withLabels('h2')
             }
           }
           agent {
@@ -713,19 +572,8 @@ pipeline {
         }
         stage('engine-IT-wildfly-domain') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-IT-wildfly')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('IT')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-IT-wildfly') && withLabels('all-as', 'wildfly')
             }
           }
           agent {
@@ -748,19 +596,8 @@ pipeline {
         }
         stage('engine-IT-wildfly-servlet') {
           when {
-            allOf {
-              expression {
-                skipStageType(failedStageTypes, 'engine-IT-wildfly')
-              }
-              anyOf {
-                branch 'pipeline-master';
-                allOf {
-                  changeRequest();
-                  expression {
-                    withLabels('IT')
-                  }
-                }
-              }
+            expression {
+              skipStageType(failedStageTypes, 'engine-IT-wildfly') && withLabels('all-as', 'wildfly')
             }
           }
           agent {
