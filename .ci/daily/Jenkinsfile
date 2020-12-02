@@ -236,7 +236,7 @@ pipeline {
           anyOf {
             branch defaultBranch();
             expression {
-              return withLabels(getLabels(env.PROFILE))
+              return withLabels(*getLabels(env.PROFILE))
             }
           }
           beforeAgent true
