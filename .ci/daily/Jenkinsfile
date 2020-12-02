@@ -574,3 +574,11 @@ String getMavenProfileDir(String profile) {
 boolean isQaStashEnabled(String profile) {
   return resolveMavenProfileInfo(profile).qaStash
 }
+
+void addFailedStageType(List failedStageTypesList, String stageType) {
+  if (!failedStageTypesList.contains(stageType)) failedStageTypesList << stageType
+}
+
+boolean skipStageType(List failedStageTypesList, String stageType) {
+  !failedStageTypesList.contains(stageType)
+}
