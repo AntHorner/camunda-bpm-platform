@@ -326,9 +326,6 @@ pipeline {
             always {
               junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
             }
-            failure {
-              addFailedStageType(failedStageTypes, 'webapp-IT')
-            }
           }
         }
         stage('webapp-IT-standalone-wildfly') {
