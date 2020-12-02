@@ -90,7 +90,7 @@ pipeline {
         stage('sql-scripts-h2') {
           when {
             expression {
-              return withLabels('h2', 'all-db')
+              withLabels('h2', 'all-db')
             }
             beforeAgent true
           }
@@ -108,7 +108,7 @@ pipeline {
         stage('UPGRADE-databases-from-714-h2') {
           when {
             expression {
-              return withLabels('h2', 'all-db')
+              withLabels('h2', 'all-db')
             }
             beforeAgent true
           }
@@ -131,7 +131,7 @@ pipeline {
         stage('UPGRADE-instance-migration-h2') {
           when {
             expression {
-              return withLabels('default-build', 'migration')
+              withLabels('default-build', 'migration')
             }
             beforeAgent true
           }
@@ -154,7 +154,7 @@ pipeline {
         stage('UPGRADE-old-engine-from-714-h2') {
           when {
             expression {
-              return withLabels('h2', 'all-db')
+              withLabels('h2', 'all-db')
             }
             beforeAgent true
           }
@@ -177,7 +177,7 @@ pipeline {
         stage('UPGRADE-rolling-update-h2') {
           when {
             expression {
-              return withLabels('rolling-update', 'default-build')
+              withLabels('rolling-update', 'default-build')
             }
             beforeAgent true
           }
@@ -236,7 +236,7 @@ pipeline {
           anyOf {
             branch 'pipeline-master';
             expression {
-              return withLabels(getLabels(env.PROFILE))
+              withLabels(getLabels(env.PROFILE))
             }
           }
           beforeAgent true
@@ -268,7 +268,7 @@ pipeline {
         }
         when {
           expression {
-            return withLabels('default-build')
+            withLabels('default-build')
           }
           beforeAgent true
         }
@@ -324,7 +324,7 @@ void runMaven(boolean runtimeStash, boolean archivesStash, boolean qaStash, Stri
   }
 }
 
-void withLabels(String... labels) {
+boolean withLabels(String... labels) {
   if (params.STANDALONE && pullRequest.labels.contains('TODO')) {
   //if (params.STANDALONE && pullRequest.labels.contains('no-build')) {
     return false;
@@ -348,8 +348,8 @@ void withLabels(String... labels) {
   return false;
 }
 
-void withDbLabels(String dbLabel) {
-  return withLabels(getDbType(dbLabel))
+boolean withDbLabels(String dbLabel) {
+  return withLabels(getDbType(dbLabel));
 }
 
 String getDbAgent(String dbLabel, Integer cpuLimit = 4, Integer mavenForkCount = 1){
@@ -446,21 +446,22 @@ String resolveMavenProfileInfo(String profile) {
           directory: 'qa/test-db-instance-migration/',
           command: 'verify -Pinstance-migration,',
           qaStash: true,
-          labels: ''],
+          labels: []],
       'old-engine': [
           directory: 'qa/',
           command: 'verify -Pold-engine,',
-          qaStash: false],
+          qaStash: false,
+          labels: []],
       'rolling-update': [
           directory: 'qa/test-db-rolling-update/',
           command: 'verify -Prolling-update,',
           qaStash: true,
-          labels: ''],
+          labels: []],
       'large-data-tests': [
           directory: 'qa/large-data-tests/',
           command: 'verify -Plarge-data-tests,',
           qaStash: false,
-          labels: '']
+          labels: []]
   ]
 
   return PROFILE_PATHS[profile]
